@@ -135,6 +135,23 @@ function useCursor() {
   return pos;
 }
 
+const MOBILE_QUERY = "(max-width: 720px)";
+
+function useMediaQuery(query) {
+  const getMatch = () => typeof window !== "undefined" && window.matchMedia(query).matches;
+  const [matches, setMatches] = useState(getMatch);
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const onChange = () => setMatches(media.matches);
+    onChange();
+    media.addEventListener?.("change", onChange);
+    return () => media.removeEventListener?.("change", onChange);
+  }, [query]);
+
+  return matches;
+}
+
 function useHotkey(matcher, handler) {
   useEffect(() => {
     const fn = (e) => { if (matcher(e)) { e.preventDefault(); handler(e); } };
@@ -158,9 +175,11 @@ const fmtTime = (d, tz = SITE.tz) => {
 // ── Atoms ───────────────────────────────────────────────────────────────────
 
 function SectionHead({ no, title, hint, idRef }) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+
   return (
     <header id={idRef} style={{
-      display: "grid", gridTemplateColumns: "auto 1fr auto", gap: 16,
+      display: "grid", gridTemplateColumns: isMobile ? "auto 1fr" : "auto 1fr auto", gap: isMobile ? 10 : 16,
       alignItems: "baseline", paddingBottom: 18, marginBottom: 28,
       borderBottom: ".5px solid var(--hair)",
     }}>
@@ -168,7 +187,7 @@ function SectionHead({ no, title, hint, idRef }) {
       <h2 style={{
         margin: 0, fontSize: 18, fontWeight: 500, letterSpacing: "-.01em",
       }}>{title}</h2>
-      {hint && <span className="mono small" style={{ color: "var(--faint)" }}>{hint}</span>}
+      {hint && <span className="mono small" style={{ color: "var(--faint)", gridColumn: isMobile ? "2" : "auto" }}>{hint}</span>}
     </header>
   );
 }
@@ -227,6 +246,8 @@ function ProjectPreview({ id }) {
 // ── Top bar ─────────────────────────────────────────────────────────────────
 
 function TopBar({ onCmdK, theme, onTheme }) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+
   return (
     <header style={{
       position: "sticky", top: 0, zIndex: 40,
@@ -237,15 +258,15 @@ function TopBar({ onCmdK, theme, onTheme }) {
     }}>
       <div style={{
         maxWidth: 1080, margin: "0 auto",
-        padding: "12px 32px",
-        display: "flex", alignItems: "center", gap: 24,
+        padding: isMobile ? "12px 20px" : "12px 32px",
+        display: "flex", alignItems: "center", gap: isMobile ? 12 : 24,
       }}>
         <a href="#top" className="mono" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
           <Mark />
           <span style={{ fontWeight: 500, fontSize: 13 }}>duc.tran</span>
-          <span style={{ color: "var(--faint)", fontSize: 12 }}>/ portfolio</span>
+          {!isMobile && <span style={{ color: "var(--faint)", fontSize: 12 }}>/ portfolio</span>}
         </a>
-        <nav className="mono" style={{ display: "flex", gap: 18, marginLeft: "auto", fontSize: 12 }}>
+        <nav className="mono" style={{ display: isMobile ? "none" : "flex", gap: 18, marginLeft: "auto", fontSize: 12 }}>
           {[["about","#about"],["work","#work"],["projects","#projects"],["contact","#contact"]].map(([l,h]) => (
             <a key={l} href={h} style={{ color: "var(--muted)", textDecoration: "none" }}
                onMouseEnter={(e)=>e.currentTarget.style.color="var(--fg)"}
@@ -287,9 +308,11 @@ function Mark() {
 // ── Hero variants ───────────────────────────────────────────────────────────
 
 function HeroStacked({ now }) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+
   return (
-    <section id="top" style={{ paddingTop: 84, paddingBottom: "var(--section-y)" }}>
-      <div className="mono small reveal" data-d="0" style={{ color: "var(--faint)", display: "flex", gap: 12, marginBottom: 28 }}>
+    <section id="top" style={{ paddingTop: isMobile ? 64 : 84, paddingBottom: "var(--section-y)" }}>
+      <div className="mono small reveal" data-d="0" style={{ color: "var(--faint)", display: "flex", gap: 12, marginBottom: 28, flexWrap: "wrap" }}>
         <span>~/portfolio</span>
         <span>·</span>
         <span>v2026.05</span>
@@ -300,11 +323,11 @@ function HeroStacked({ now }) {
       </div>
       <h1 className="reveal" data-d="1" style={{
         margin: 0, fontFamily: "var(--font-display)",
-        fontSize: "clamp(56px, 9vw, 116px)",
+        fontSize: isMobile ? "clamp(48px, 15vw, 72px)" : "clamp(56px, 9vw, 116px)",
         lineHeight: 0.95, letterSpacing: "-.035em", fontWeight: 500,
       }}>Duc Tran.</h1>
       <p className="reveal" data-d="2" style={{
-        margin: "20px 0 0", fontSize: 22, color: "var(--muted)", maxWidth: 640,
+        margin: "20px 0 0", fontSize: isMobile ? 19 : 22, color: "var(--muted)", maxWidth: 640,
         lineHeight: 1.4, letterSpacing: "-.01em",
       }}>
         Data journalism lead at Tech in Asia. I cover the Asian tech ecosystem
@@ -322,9 +345,11 @@ function HeroStacked({ now }) {
 }
 
 function HeroSplit({ now }) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+
   return (
-    <section id="top" style={{ paddingTop: 84, paddingBottom: "var(--section-y)" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 60, alignItems: "end" }}>
+    <section id="top" style={{ paddingTop: isMobile ? 64 : 84, paddingBottom: "var(--section-y)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.4fr 1fr", gap: isMobile ? 28 : 60, alignItems: "end" }}>
         <div>
           <div className="mono small reveal" data-d="0" style={{ color: "var(--faint)", marginBottom: 28, display: "flex", gap: 10 }}>
             <span className="pulse-dot" />
@@ -340,7 +365,11 @@ function HeroSplit({ now }) {
           </h1>
         </div>
         <aside className="mono small reveal" data-d="2" style={{
-          color: "var(--muted)", borderLeft: ".5px solid var(--hair)", paddingLeft: 24,
+          color: "var(--muted)",
+          borderLeft: isMobile ? 0 : ".5px solid var(--hair)",
+          borderTop: isMobile ? ".5px solid var(--hair)" : 0,
+          paddingLeft: isMobile ? 0 : 24,
+          paddingTop: isMobile ? 20 : 0,
           display: "flex", flexDirection: "column", gap: 14,
         }}>
           <KV k="role" v={SITE.role} />
@@ -355,6 +384,7 @@ function HeroSplit({ now }) {
 }
 
 function HeroTerminal({ now }) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
   const [lines, setLines] = useState([]);
   useEffect(() => {
     const script = [
@@ -379,11 +409,11 @@ function HeroTerminal({ now }) {
     return () => clearTimeout(id);
   }, []);
   return (
-    <section id="top" style={{ paddingTop: 84, paddingBottom: "var(--section-y)" }}>
+    <section id="top" style={{ paddingTop: isMobile ? 64 : 84, paddingBottom: "var(--section-y)" }}>
       <div className="mono" style={{
         background: "var(--panel)", border: ".5px solid var(--hair)",
-        borderRadius: 6, padding: "18px 22px", fontSize: 14, lineHeight: 1.65,
-        maxWidth: 720,
+        borderRadius: 6, padding: isMobile ? "16px 14px" : "18px 22px", fontSize: isMobile ? 12 : 14, lineHeight: 1.65,
+        maxWidth: 720, overflowWrap: "anywhere",
       }}>
         <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
           <Dot c="#ff5f57" /><Dot c="#febc2e" /><Dot c="#28c840" />
@@ -423,11 +453,13 @@ function KV({ k, v }) {
 // ── Sections ────────────────────────────────────────────────────────────────
 
 function About() {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+
   return (
     <section id="about" style={{ paddingBottom: "var(--section-y)" }}>
       <SectionHead no="01" title="About" hint="3 paragraphs · 40s read" />
       <div style={{
-        display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60,
+        display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 32 : 60,
       }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 18, fontSize: 16, lineHeight: 1.6, maxWidth: 540 }}>
           {SITE.about.map((p, i) => <p key={i} style={{ margin: 0, textWrap: "pretty" }}>{p}</p>)}
@@ -445,18 +477,22 @@ function About() {
 }
 
 function AboutRow({ k, v }) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+
   return (
     <div style={{
-      display: "grid", gridTemplateColumns: "100px 1fr", gap: 14,
+      display: "grid", gridTemplateColumns: isMobile ? "1fr" : "100px 1fr", gap: isMobile ? 6 : 14,
       paddingBottom: "var(--row-y)", borderBottom: ".5px solid var(--hair)",
     }}>
       <span style={{ color: "var(--faint)" }}>{k}</span>
-      <span style={{ color: "var(--fg)" }}>{v}</span>
+      <span style={{ color: "var(--fg)", overflowWrap: "anywhere" }}>{v}</span>
     </div>
   );
 }
 
 function Work() {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+
   return (
     <section id="work" style={{ paddingBottom: "var(--section-y)" }}>
       <SectionHead no="02" title="Work" hint="5 positions · 7 years" />
@@ -464,8 +500,8 @@ function Work() {
         {WORK.map((w, i) => (
           <li key={i} style={{
             display: "grid",
-            gridTemplateColumns: "140px 1.4fr 1fr",
-            gap: 24, alignItems: "baseline",
+            gridTemplateColumns: isMobile ? "1fr" : "140px 1.4fr 1fr",
+            gap: isMobile ? 6 : 24, alignItems: "baseline",
             padding: "calc(var(--row-y) + 6px) 0",
             borderBottom: ".5px solid var(--hair)",
             transition: "background .2s",
@@ -481,7 +517,7 @@ function Work() {
               <div style={{ fontSize: 15, fontWeight: 500 }}>{w.role}</div>
               <div className="mono small" style={{ color: "var(--muted)", marginTop: 2 }}>{w.org}</div>
             </div>
-            <span className="small" style={{ color: "var(--muted)", textAlign: "right" }}>{w.note}</span>
+            <span className="small" style={{ color: "var(--muted)", textAlign: isMobile ? "left" : "right" }}>{w.note}</span>
           </li>
         ))}
       </ol>
@@ -492,14 +528,15 @@ function Work() {
 // ── Projects ────────────────────────────────────────────────────────────────
 
 function ProjectCard({ p, open, onToggle, style }) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
   const sharedHeader = (
     <header
       onClick={onToggle}
       style={{
         cursor: "pointer", userSelect: "none",
         display: "grid",
-        gridTemplateColumns: "auto 1fr auto",
-        gap: 18, alignItems: "baseline", padding: "20px 0",
+        gridTemplateColumns: isMobile ? "auto 1fr" : "auto 1fr auto",
+        gap: isMobile ? 12 : 18, alignItems: "baseline", padding: isMobile ? "16px 0" : "20px 0",
       }}
     >
       <span className="mono small tnum" style={{ color: "var(--faint)" }}>{p.no}</span>
@@ -512,7 +549,10 @@ function ProjectCard({ p, open, onToggle, style }) {
           <span>{p.pub}</span><span>·</span><span className="tnum">{p.date}</span>
         </div>
       </div>
-      <span className="mono small" style={{ color: "var(--muted)", transition: "transform .25s" }}>
+      <span className="mono small" style={{
+        color: "var(--muted)", transition: "transform .25s",
+        gridColumn: isMobile ? "2" : "auto", justifySelf: isMobile ? "start" : "auto",
+      }}>
         {open ? "[ collapse ]" : "[ read ]"}
       </span>
     </header>
@@ -523,7 +563,7 @@ function ProjectCard({ p, open, onToggle, style }) {
       borderBottom: ".5px solid var(--hair)",
       ...(style === "card" ? {
         border: ".5px solid var(--hair)", borderRadius: 6,
-        padding: "0 22px", marginBottom: 12, background: open ? "var(--panel)" : "transparent",
+        padding: isMobile ? "0 14px" : "0 22px", marginBottom: 12, background: open ? "var(--panel)" : "transparent",
       } : {}),
     }}>
       {sharedHeader}
@@ -539,8 +579,10 @@ function ProjectCard({ p, open, onToggle, style }) {
 }
 
 function ProjectBody({ p }) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 40 }}>
+    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.5fr 1fr", gap: isMobile ? 28 : 40 }}>
       <div>
         <p style={{ margin: "0 0 20px", fontSize: 16, lineHeight: 1.55, color: "var(--fg)", textWrap: "pretty" }}>{p.blurb}</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 14, fontSize: 14, lineHeight: 1.6, color: "var(--muted)" }}>
@@ -549,7 +591,7 @@ function ProjectBody({ p }) {
         <div className="label" style={{ marginTop: 28, marginBottom: 10 }}>Impact</div>
         <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 6 }}>
           {p.impact.map((it, i) => (
-            <li key={i} className="mono small" style={{ color: "var(--muted)", display: "flex", gap: 10 }}>
+            <li key={i} className="mono small" style={{ color: "var(--muted)", display: "flex", gap: 10, overflowWrap: "anywhere" }}>
               <span style={{ color: "var(--accent)" }}>↳</span>{it}
             </li>
           ))}
@@ -559,11 +601,11 @@ function ProjectBody({ p }) {
         <ProjectPreview id={p.id} />
         <div>
           <div className="label" style={{ marginBottom: 8 }}>By the numbers</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(auto-fit, minmax(92px, 1fr))" : "1fr 1fr 1fr", gap: 12 }}>
             {p.metrics.map(([k, v], i) => (
               <div key={i} style={{ padding: "10px 12px", border: ".5px solid var(--hair)", borderRadius: 4 }}>
                 <div className="mono tnum" style={{ fontSize: 18, fontWeight: 500 }}>{v}</div>
-                <div className="mono small" style={{ color: "var(--muted)", marginTop: 2 }}>{k}</div>
+                <div className="mono small" style={{ color: "var(--muted)", marginTop: 2, overflowWrap: "anywhere" }}>{k}</div>
               </div>
             ))}
           </div>
@@ -587,15 +629,16 @@ function ProjectBody({ p }) {
 }
 
 function ProjectsGrid({ openId, onToggle }) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
   // Compact 2x2 grid card style — no inline expand; opens the inline panel below.
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "var(--hair)", border: ".5px solid var(--hair)", borderRadius: 6, overflow: "hidden" }}>
+    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 1, background: "var(--hair)", border: ".5px solid var(--hair)", borderRadius: 6, overflow: "hidden" }}>
       {PROJECTS.map((p) => (
         <button key={p.id} onClick={() => onToggle(p.id)} style={{
           appearance: "none", border: 0, textAlign: "left",
-          padding: 24, background: openId === p.id ? "var(--panel)" : "var(--bg)",
+          padding: isMobile ? 18 : 24, background: openId === p.id ? "var(--panel)" : "var(--bg)",
           cursor: "pointer", display: "flex", flexDirection: "column", gap: 16,
-          color: "inherit", minHeight: 240,
+          color: "inherit", minHeight: isMobile ? 180 : 240,
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <span className="mono small" style={{ color: "var(--faint)" }}>{p.no}</span>
@@ -642,11 +685,13 @@ function Projects({ cardStyle }) {
 }
 
 function Contact() {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+
   return (
     <section id="contact" style={{ paddingBottom: "var(--section-y)" }}>
       <SectionHead no="04" title="Contact" hint="ping anytime" />
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "start" }}>
-        <p style={{ margin: 0, fontSize: 22, lineHeight: 1.4, letterSpacing: "-.01em", textWrap: "pretty" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 32 : 60, alignItems: "start" }}>
+        <p style={{ margin: 0, fontSize: isMobile ? 19 : 22, lineHeight: 1.4, letterSpacing: "-.01em", textWrap: "pretty" }}>
           The fastest way to reach me is email. I read everything, reply to most things within 48 hours, and have a soft spot for anyone who leads with an interesting dataset.
         </p>
         <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "var(--row-y)" }}>
@@ -661,13 +706,15 @@ function Contact() {
 }
 
 function ContactRow({ k, v, href }) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+
   return (
     <li style={{
-      display: "grid", gridTemplateColumns: "110px 1fr", gap: 14,
+      display: "grid", gridTemplateColumns: isMobile ? "1fr" : "110px 1fr", gap: isMobile ? 6 : 14,
       paddingBottom: "var(--row-y)", borderBottom: ".5px solid var(--hair)",
     }}>
       <span className="mono small" style={{ color: "var(--faint)" }}>{k}</span>
-      <a href={href} className="mono small" style={{ color: "var(--fg)", textDecoration: "underline", textUnderlineOffset: 4 }}>{v}</a>
+      <a href={href} className="mono small" style={{ color: "var(--fg)", textDecoration: "underline", textUnderlineOffset: 4, overflowWrap: "anywhere" }}>{v}</a>
     </li>
   );
 }
@@ -675,5 +722,5 @@ function ContactRow({ k, v, href }) {
 Object.assign(window, {
   SectionHead, Spark, TopBar, HeroStacked, HeroSplit, HeroTerminal,
   About, Work, Projects, Contact, KV, FONT_PAIRS, ACCENTS, SITE,
-  useNow, useCursor, useHotkey, fmtTime,
+  MOBILE_QUERY, useNow, useCursor, useMediaQuery, useHotkey, fmtTime,
 });

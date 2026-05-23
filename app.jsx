@@ -122,6 +122,7 @@ function toast(msg) {
 // ── Status Bar ──────────────────────────────────────────────────────────────
 
 function StatusBar({ now }) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
   const cur = useCursor();
   const [konami, setKonami] = _useState(false);
   // Tiny scroll readout — 0 → 100
@@ -157,8 +158,8 @@ function StatusBar({ now }) {
       color: "var(--muted)",
     }}>
       <div style={{
-        maxWidth: 1080, margin: "0 auto", padding: "8px 32px",
-        display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap",
+        maxWidth: 1080, margin: "0 auto", padding: isMobile ? "8px 20px" : "8px 32px",
+        display: "flex", alignItems: "center", gap: isMobile ? 12 : 22, flexWrap: "wrap",
       }}>
         <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
           <span className="pulse-dot" /> live
@@ -166,14 +167,22 @@ function StatusBar({ now }) {
         <span>·</span>
         <span><span style={{ color: "var(--faint)" }}>local </span><span className="tnum" style={{ color: "var(--fg)" }}>{fmtTime(now)}</span></span>
         <span>·</span>
-        <span><span style={{ color: "var(--faint)" }}>cursor </span><span className="tnum">{String(cur.x).padStart(4,"0")}, {String(cur.y).padStart(4,"0")}</span></span>
-        <span>·</span>
+        {!isMobile && (
+          <>
+            <span><span style={{ color: "var(--faint)" }}>cursor </span><span className="tnum">{String(cur.x).padStart(4,"0")}, {String(cur.y).padStart(4,"0")}</span></span>
+            <span>·</span>
+          </>
+        )}
         <span><span style={{ color: "var(--faint)" }}>scroll </span><span className="tnum">{String(scroll).padStart(3,"0")}%</span></span>
-        <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 14 }}>
+        <span style={{ marginLeft: isMobile ? 0 : "auto", display: "inline-flex", alignItems: "center", gap: 14 }}>
           {konami && <span style={{ color: "var(--accent)" }}>★ unlocked</span>}
-          <span style={{ color: "var(--faint)" }}>press</span>
-          <kbd style={{ border: ".5px solid var(--hair-strong)", padding: "1px 6px", borderRadius: 3 }}>?</kbd>
-          <span style={{ color: "var(--faint)" }}>for shortcuts</span>
+          {!isMobile && (
+            <>
+              <span style={{ color: "var(--faint)" }}>press</span>
+              <kbd style={{ border: ".5px solid var(--hair-strong)", padding: "1px 6px", borderRadius: 3 }}>?</kbd>
+              <span style={{ color: "var(--faint)" }}>for shortcuts</span>
+            </>
+          )}
         </span>
       </div>
     </footer>
@@ -215,6 +224,7 @@ function App() {
   const [cmdkOpen, setCmdk] = _useState(false);
   const [helpOpen, setHelp] = _useState(false);
   const now = useNow();
+  const isMobile = useMediaQuery(MOBILE_QUERY);
 
   // Apply tweaks to <html> data-attrs and CSS variables.
   _useEffect(() => {
@@ -265,7 +275,7 @@ function App() {
     <>
       <TopBar onCmdK={() => setCmdk(true)} theme={t.dark ? "dark" : "light"} onTheme={toggleTheme} />
 
-      <main style={{ maxWidth: 1080, margin: "0 auto", padding: "0 32px 120px" }}>
+      <main style={{ maxWidth: 1080, margin: "0 auto", padding: isMobile ? "0 20px 112px" : "0 32px 120px" }}>
         <HeroPick now={now} />
         <About />
         <Work />
