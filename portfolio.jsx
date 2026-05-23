@@ -654,7 +654,6 @@ function Contact() {
           {SITE.social.map((s) => (
             <ContactRow key={s.k} k={s.k} v={s.v} href={s.href} />
           ))}
-          <ContactRow k="resume" v="resume-linkedin.pdf  ↗" href="./resume-linkedin.pdf" />
         </ul>
       </div>
     </section>

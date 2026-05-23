@@ -24,7 +24,6 @@ function CommandPalette({ open, onClose, onTheme, theme, projects, onJump }) {
       { id: "theme", group: "actions", label: theme === "dark" ? "Switch to light" : "Switch to dark", hint: "⇧⌘L", run: onTheme },
       { id: "email", group: "actions", label: "Copy email to clipboard", hint: SITE.email,
         run: () => { navigator.clipboard?.writeText(SITE.email); toast("email copied"); } },
-      { id: "resume", group: "actions", label: "Download resume", hint: ".pdf · 124kb", run: () => toast("resume requested") },
       { id: "source", group: "actions", label: "View source on GitHub", hint: "↗", run: () => window.open("about:blank") },
     ];
     if (!q.trim()) return base;
