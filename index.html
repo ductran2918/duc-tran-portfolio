@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Duc Tran — Data Journalist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500;600&family=Instrument+Serif&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+<script>
+  // Persisted tweak defaults — host rewrites this block on disk via __edit_mode_set_keys.
+  window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "dark": true,
+    "accent": "#86f4b6",
+    "fontPair": "plex",
+    "density": "compact",
+    "hero": "stacked",
+    "card": "list",
+    "texture": "grid"
+  }/*EDITMODE-END*/;
+</script>
+
+<style>
+  :root {
+    --bg: #fafaf7;
+    --fg: #0a0a08;
+    --muted: rgba(10,10,8,.55);
+    --faint: rgba(10,10,8,.35);
+    --hair: rgba(10,10,8,.12);
+    --hair-strong: rgba(10,10,8,.22);
+    --panel: rgba(0,0,0,.025);
+    --accent: #16a34a;
+    --accent-soft: color-mix(in oklab, var(--accent) 18%, transparent);
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    --font-display: var(--font-sans);
+    --row-y: 14px;
+    --section-y: 96px;
+    --bg-tex:
+      linear-gradient(to right, rgba(10,10,8,.05) .5px, transparent .5px) 0 0/24px 24px,
+      linear-gradient(to bottom, rgba(10,10,8,.05) .5px, transparent .5px) 0 0/24px 24px;
+  }
+  html[data-theme="dark"] {
+    --bg: #0b0b0a;
+    --fg: #f5f5f1;
+    --muted: rgba(245,245,241,.58);
+    --faint: rgba(245,245,241,.35);
+    --hair: rgba(245,245,241,.10);
+    --hair-strong: rgba(245,245,241,.20);
+    --panel: rgba(255,255,255,.03);
+    --bg-tex:
+      linear-gradient(to right, rgba(245,245,241,.045) .5px, transparent .5px) 0 0/24px 24px,
+      linear-gradient(to bottom, rgba(245,245,241,.045) .5px, transparent .5px) 0 0/24px 24px;
+  }
+  html[data-tex="lines"] {
+    --bg-tex: linear-gradient(to bottom, currentColor .5px, transparent .5px) 0 0/100% 32px;
+  }
+  html[data-tex="dots"] {
+    --bg-tex: radial-gradient(currentColor 0.7px, transparent 0.7px) 0 0/18px 18px;
+  }
+  html[data-tex="none"] { --bg-tex: none; }
+
+  html[data-density="compact"] { --row-y: 9px;  --section-y: 64px; }
+  html[data-density="regular"] { --row-y: 14px; --section-y: 96px; }
+  html[data-density="comfy"]   { --row-y: 20px; --section-y: 128px; }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01","cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background: var(--bg-tex);
+    color: var(--fg);
+    opacity: .6;
+    pointer-events: none;
+    z-index: 0;
+    mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+  }
+  #root { position: relative; z-index: 1; }
+
+  a { color: inherit; }
+  ::selection { background: var(--accent); color: #000; }
+
+  .mono { font-family: var(--font-mono); font-feature-settings: "ss01","ss02","zero","calt"; letter-spacing: -.005em; }
+  .tnum { font-variant-numeric: tabular-nums; }
+  .small { font-size: 11px; }
+  .label { font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+
+  .hairline { border-color: var(--hair); }
+  .hairline-x { border-top: .5px solid var(--hair); }
+
+  .pulse-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 var(--accent-soft);
+    animation: pulse 2.2s cubic-bezier(.4,0,.6,1) infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 var(--accent-soft); }
+    70%  { box-shadow: 0 0 0 8px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  .blink::after {
+    content: "▌"; display: inline-block; margin-left: 4px;
+    animation: blink 1.05s steps(2) infinite;
+    color: var(--accent);
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* command palette */
+  .cmdk-back {
+    position: fixed; inset: 0; z-index: 90;
+    background: color-mix(in oklab, var(--bg) 70%, transparent);
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    display: flex; justify-content: center; align-items: flex-start;
+    padding-top: 14vh;
+    animation: cmdk-in .14s ease-out;
+  }
+  @keyframes cmdk-in { from { opacity: 0 } to { opacity: 1 } }
+
+  /* hero entry animation */
+  .reveal { opacity: 0; transform: translateY(8px); animation: reveal .7s cubic-bezier(.2,.7,.2,1) forwards; }
+  .reveal[data-d="0"] { animation-delay: 0ms }
+  .reveal[data-d="1"] { animation-delay: 80ms }
+  .reveal[data-d="2"] { animation-delay: 160ms }
+  .reveal[data-d="3"] { animation-delay: 240ms }
+  .reveal[data-d="4"] { animation-delay: 320ms }
+  .reveal[data-d="5"] { animation-delay: 400ms }
+  .reveal[data-d="6"] { animation-delay: 480ms }
+  @keyframes reveal { to { opacity: 1; transform: none; } }
+
+  /* card expand */
+  .card-body-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s cubic-bezier(.2,.7,.2,1); }
+  .card-body-wrap[data-open="1"] { grid-template-rows: 1fr; }
+  .card-body-wrap > div { overflow: hidden; }
+
+  /* spark line */
+  .spark path { fill: none; stroke: var(--accent); stroke-width: 1.2; }
+  .spark .axis { stroke: var(--hair); stroke-width: .5; }
+
+  /* focus rings */
+  button, [role="button"] { -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, [role="button"]:focus-visible {
+    outline: 1px solid var(--accent); outline-offset: 2px; border-radius: 2px;
+  }
+
+  /* placeholder image (project hover preview) */
+  .preview-ph {
+    background:
+      repeating-linear-gradient(135deg, var(--hair) 0 1px, transparent 1px 8px),
+      var(--panel);
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<!-- React + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="portfolio.jsx"></script>
+<script type="text/babel" src="app.jsx"></script>
+
+</body>
+</html>
