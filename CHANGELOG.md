@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-06-03
+
+- Add Internal Product Builder role at Tech in Asia <!-- changelog:commit=8561a00b8a098b0f1772bd0888f381b4ff128063 -->
+
 ## 2026-05-23
 
 - Make the portfolio responsive on mobile while preserving the desktop layout <!-- changelog:commit=0fbb4a2d43e2c13b6ee46e95cba4535b9b072fde -->
