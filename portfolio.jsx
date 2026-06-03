@@ -27,6 +27,7 @@ const SITE = {
 };
 
 const WORK = [
+  { from: "Jan 2026", to: "present", role: "Internal Product Builder",  org: "Tech in Asia",    note: "End-to-end products with agents, Vercel/n8n, Slack integrations" },
   { from: "2024", to: "present", role: "Data Journalism Lead",  org: "Tech in Asia",    note: "YC W15 · Asian tech & VC ecosystem" },
   { from: "2023", to: "2024",    role: "Data Journalist",       org: "VnExpress.net",   note: "Economy · demographics · technology" },
   { from: "2021", to: "2023",    role: "Reporter",              org: "Dân Trí",         note: "Economy desk · DBiz format launch" },
@@ -495,7 +496,7 @@ function Work() {
 
   return (
     <section id="work" style={{ paddingBottom: "var(--section-y)" }}>
-      <SectionHead no="02" title="Work" hint="5 positions · 7 years" />
+      <SectionHead no="02" title="Work" hint={`${WORK.length} positions · since 2018`} />
       <ol style={{ listStyle: "none", padding: 0, margin: 0 }}>
         {WORK.map((w, i) => (
           <li key={i} style={{
